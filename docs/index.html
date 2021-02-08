@@ -1,0 +1,144 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>@shlappas/sorted-set</title>
+	<meta name="description" content="Documentation for @shlappas/sorted-set">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="assets/css/main.css">
+	<script async src="assets/js/search.js" id="search-script"></script>
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="assets/js/search.json" data-base=".">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="index.html" class="title">@shlappas/sorted-set</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<h1>@shlappas/sorted-set</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<div class="tsd-panel tsd-typography">
+				<a href="#sorted-array" id="sorted-array" style="color: inherit; text-decoration: none;">
+					<h1>Sorted Array</h1>
+				</a>
+				<p>Sometimes you have an array that needs to be kept in order through pushes and
+				pops etc.</p>
+				<pre><code class="language-js"><span style="color: #008000">// Becomes slow as arrays get larger. O(n log n)</span>
+<span style="color: #001080">arr</span><span style="color: #000000">.</span><span style="color: #795E26">push</span><span style="color: #000000">(</span><span style="color: #001080">value</span><span style="color: #000000">)</span>
+<span style="color: #001080">arr</span><span style="color: #000000">.</span><span style="color: #795E26">sort</span><span style="color: #000000">()</span>
+
+<span style="color: #008000">// May check all values; not binary search.</span>
+<span style="color: #001080">arr</span><span style="color: #000000">.</span><span style="color: #795E26">indexOf</span><span style="color: #000000">(</span><span style="color: #001080">value</span><span style="color: #000000">)</span>
+</code></pre>
+				<p>This module provides an API similar to the builtin javascript <code>Array</code>, but
+				remains sorted after insertion and deletion.</p>
+				<pre><code class="language-js"><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">arr</span><span style="color: #000000"> = </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #795E26">SortedArray</span><span style="color: #000000">((</span><span style="color: #001080">a</span><span style="color: #000000">, </span><span style="color: #001080">b</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">a</span><span style="color: #000000"> - </span><span style="color: #001080">b</span><span style="color: #000000">)</span>
+
+<span style="color: #008000">// Each insert runs in O(log n)</span>
+<span style="color: #001080">arr</span><span style="color: #000000">.</span><span style="color: #795E26">insert</span><span style="color: #000000">(</span><span style="color: #098658">5</span><span style="color: #000000">) </span><span style="color: #008000">// [ 5 ]</span>
+<span style="color: #001080">arr</span><span style="color: #000000">.</span><span style="color: #795E26">insert</span><span style="color: #000000">(</span><span style="color: #098658">10</span><span style="color: #000000">) </span><span style="color: #008000">// [ 5 10 ]</span>
+<span style="color: #001080">arr</span><span style="color: #000000">.</span><span style="color: #795E26">insert</span><span style="color: #000000">(</span><span style="color: #098658">1</span><span style="color: #000000">) </span><span style="color: #008000">// [ 1 5 10 ]</span>
+<span style="color: #001080">arr</span><span style="color: #000000">.</span><span style="color: #795E26">insert</span><span style="color: #000000">(</span><span style="color: #098658">5</span><span style="color: #000000">) </span><span style="color: #008000">// [ 1 5 5 10 ]</span>
+
+<span style="color: #001080">arr</span><span style="color: #000000">.</span><span style="color: #795E26">forEach</span><span style="color: #000000">((</span><span style="color: #001080">v</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> </span><span style="color: #001080">console</span><span style="color: #000000">.</span><span style="color: #795E26">log</span><span style="color: #000000">(</span><span style="color: #001080">v</span><span style="color: #000000">)) </span><span style="color: #008000">// 1 5 5 10</span>
+</code></pre>
+				<a href="#usage" id="usage" style="color: inherit; text-decoration: none;">
+					<h2>Usage</h2>
+				</a>
+				<p>Check out <a href="http://shlappas.com/sorted-array.js">the docs</a>!</p>
+				<a href="#installation" id="installation" style="color: inherit; text-decoration: none;">
+					<h2>Installation</h2>
+				</a>
+				<pre><code class="language-bash"><span style="color: #000000">yarn add @shlappas/sorted-array</span>
+</code></pre>
+				<a href="#see-also" id="see-also" style="color: inherit; text-decoration: none;">
+					<h2>See Also</h2>
+				</a>
+				<p>This modules is very similar to
+					<a href="https://github.com/chrismilson/sorted-set.js"><code>sorted-set</code></a>. (both use a
+				weight-balanced tree in the background)</p>
+			</div>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class=" ">
+						<a href="modules.html">Exports</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+					<li class=" tsd-kind-class tsd-has-type-parameter">
+						<a href="classes/sortedarray.html" class="tsd-kind-icon">Sorted<wbr>Array</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="modules.html#defaultcmp" class="tsd-kind-icon">default<wbr>Cmp</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="assets/js/main.js"></script>
+</body>
+</html>

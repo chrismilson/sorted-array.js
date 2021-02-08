@@ -1,41 +1,44 @@
-# Sorted Set
+# Sorted Array
 
-Sometimes you have a set that needs to be iterated in order. However doing
-something like this can be taxing on resources:
+Sometimes you have an array that needs to be kept in order through pushes and
+pops etc.
 
 ```js
-// Not in order!
-for (const value of set) { /* ... */ }
+// Becomes slow as arrays get larger. O(n log n)
+arr.push(value)
+arr.sort()
 
-// Can be slow for large sets!
-for (const value of [...set].sort()) { /* ... */ }
+// May check all values; not binary search.
+arr.indexOf(value)
 ```
 
-This module provides an API that implements the builtin javascript `Set`, but
-can be iterated in order for much less overhead than sorting an array.
+This module provides an API similar to the builtin javascript `Array`, but
+remains sorted after insertion and deletion.
 
 ```js
-const set = new SortedSet((a, b) => a - b)
+const arr = new SortedArray((a, b) => a - b)
 
-set.add(3) // { 3 }
-set.add(1) // { 1, 3 }
-set.add(5) // { 1, 3, 5 }
-set.add(2) // { 1, 2, 3, 5 }
-set.add(2) // { 1, 2, 3, 5 }
+// Each insert runs in O(log n)
+arr.insert(5) // [ 5 ]
+arr.insert(10) // [ 5 10 ]
+arr.insert(1) // [ 1 5 10 ]
+arr.insert(5) // [ 1 5 5 10 ]
 
-console.log([...set]) // [1, 2, 3, 5]
-
-// There are extra methods too!
-console.log(arr.get(1)) // 2; The value that would be at index 1.
-console.log(arr.bisect(3)) // 2; The index that 3 would be inserted into.
+arr.forEach((v) => console.log(v)) // 1 5 5 10
 ```
 
 ## Usage
 
-Check out [the docs](http://shlappas.com/sorted-set.js/modules.html)!
+Check out [the docs](http://shlappas.com/sorted-array.js)!
 
 ## Installation
 
 ```bash
-yarn add @shlappas/sorted-set
+yarn add @shlappas/sorted-array
 ```
+
+## See Also
+
+This modules is very similar to
+[`sorted-set`](https://github.com/chrismilson/sorted-set.js). (both use a
+weight-balanced tree in the background)
