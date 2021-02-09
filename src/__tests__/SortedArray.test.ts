@@ -12,6 +12,7 @@ describe('SortedSet', () => {
       expect(arr.get(-10)).toBe(undefined)
       expect(arr.get(NaN)).toBe(undefined)
       expect(arr.get(Infinity)).toBe(undefined)
+      expect(arr.get(arr.length)).toBe(undefined)
     })
 
     it('Should return the value at the given index', () => {

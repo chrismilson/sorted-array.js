@@ -63,7 +63,7 @@ export class SortedArray<T> {
     // We want to remove the rightmost node from the tree.
 
     const targetIndex = index ?? this.root.data.valueCount - 1
-    if (targetIndex < 0 || targetIndex > this.length) {
+    if (targetIndex < 0 || targetIndex >= this.length) {
       return undefined
     }
 
@@ -73,7 +73,7 @@ export class SortedArray<T> {
       node.data.valueCount -= 1
     })!
     // The value that we are popping from the tree
-    const result = target?.data.value
+    const result = target.data.value
 
     if (target.data.valueCount === 0) {
       // We should delete the entire node.
