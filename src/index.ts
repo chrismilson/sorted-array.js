@@ -1,5 +1,5 @@
 import { insert, find, SATNode, remove } from './tree'
-import { enumerate, range } from '@shlappas/itertools'
+import { enumerate, range, repeat } from '@shlappas/itertools'
 
 /**
  * The default comparison function. Designed to be consistend with
@@ -23,6 +23,32 @@ export class SortedArray<T> {
     this.compare = compare
   }
 
+  private findAtIndex(
+    idx: number,
+    callback?: (node: SATNode<T>) => void
+  ): SATNode<T> | undefined {
+    return find(this.root, (node) => {
+      // The number of indicies less than the current node
+      const ltSize = node.left?.data.valueCount ?? 0
+      // The number of indicies less than or equal to the current node
+      const leSize = node.data.valueCount - (node.right?.data.valueCount ?? 0)
+
+      if (callback !== undefined) {
+        callback(node)
+      }
+
+      if (idx < ltSize) {
+        // The index is in the left subtree
+        return -1
+      } else if (idx >= leSize) {
+        // the index is in the right subtree
+        idx -= leSize
+        return 1
+      }
+      return 0
+    })
+  }
+
   /**
    * Removes the last value from the array and returns it. Optionally an index
    * to pop from can be specified.
@@ -36,37 +62,21 @@ export class SortedArray<T> {
     }
     // We want to remove the rightmost node from the tree.
 
-    let targetIndex = index ?? this.root.data.valueCount - 1
+    const targetIndex = index ?? this.root.data.valueCount - 1
     if (targetIndex < 0 || targetIndex > this.length) {
       return undefined
     }
 
     // The index is good, so we will definitely find a node.
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const target = find(this.root, (node) => {
-      // The number of indicies less than the current node
-      const ltSize = node.left?.data.valueCount ?? 0
-      // The number of indicies less than or equal to the current node
-      const leSize = node.data.valueCount - (node.right?.data.valueCount ?? 0)
-
-      if (targetIndex < ltSize) {
-        // The index is in the left subtree
-        return -1
-      } else if (targetIndex > leSize) {
-        // the index is in the right subtree
-        targetIndex -= node.data.valueCount - leSize
-        return 1
-      }
-      return 0
+    const target = this.findAtIndex(targetIndex, (node) => {
+      node.data.valueCount -= 1
     })!
     // The value that we are popping from the tree
     const result = target?.data.value
 
-    if (target.data.valueCount > 1) {
-      // If there is more than one value, we can just decrease the count.
-      target.data.valueCount -= 1
-    } else {
-      // Otherwise we should delete the entire node.
+    if (target.data.valueCount === 0) {
+      // We should delete the entire node.
       this.root = remove(result, this.root, this.compare)
     }
 
@@ -77,12 +87,13 @@ export class SortedArray<T> {
    * Inserts a value into the sorted array in sorted order.
    */
   insert(value: T): this {
-    const node = find(this.root, (node) => this.compare(value, node.data.value))
+    const node = find(this.root, (node) => {
+      node.data.valueCount += 1
+      return this.compare(value, node.data.value)
+    })
 
     if (node === undefined) {
       this.root = insert(value, this.root, this.compare)
-    } else {
-      node.data.valueCount += 1
     }
 
     return this
@@ -224,20 +235,11 @@ export class SortedArray<T> {
    */
   get(idx: number): T | undefined {
     // Make sure we have a valid index
-    if (idx < 0 || idx >= (this.root?.data.size ?? 0) || isNaN(idx)) {
+    if (idx < 0 || idx >= (this.root?.data.valueCount ?? 0) || isNaN(idx)) {
       return undefined
     }
 
-    return find(this.root, (node) => {
-      const lSize = node.left?.data.size ?? 0
-
-      if (idx > lSize) {
-        // All nodes in the left subtree plus the single parent.
-        idx -= lSize + 1
-        return 1
-      }
-      return lSize - idx
-    })?.data.value
+    return this.findAtIndex(idx)?.data.value
   }
 
   /**
@@ -254,22 +256,35 @@ export class SortedArray<T> {
     // Performs a morris traversal of the tree.
     let curr = this.root
 
+    const valuesFrom = function* (node: SATNode<T>): Generator<T> {
+      const lCount = node.left?.data.valueCount ?? 0
+      // The right child may be an ancestor, due to the morris traversal.
+      // If so the count will be greater than the nodes count.
+      const rCount =
+        node.right && node.right.data.valueCount <= node.data.valueCount
+          ? node.right.data.valueCount
+          : 0
+      const count = node.data.valueCount - (lCount + rCount)
+
+      yield* repeat(node.data.value, count)
+    }
+
     while (curr) {
-      if (curr.left === undefined) {
-        yield curr.data.value
+      if (!curr.left) {
+        yield* valuesFrom(curr)
         curr = curr.right
       } else {
         let pre = curr.left
-        while (pre.right !== undefined && pre.right !== curr) {
+        while (pre.right && pre.right !== curr) {
           pre = pre.right
         }
 
-        if (pre.right === undefined) {
+        if (!pre.right) {
           pre.right = curr
           curr = curr.left
         } else {
           pre.right = undefined
-          yield curr.data.value
+          yield* valuesFrom(curr)
           curr = curr.right
         }
       }
