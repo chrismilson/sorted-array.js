@@ -1,14 +1,14 @@
 {
-  "name": "@shlappas/sorted-set",
+  "name": "@shlappas/sorted-array",
   "version": "1.0.0",
-  "description": "A set that keeps its elements in order",
+  "description": "An array that keeps its elements in order",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/chrismilson/sorted-set.js.git"
+    "url": "git+https://github.com/chrismilson/sorted-array.js.git"
   },
   "bugs": {
-    "url": "https://github.com/chrismilson/sorted-set.js/issues"
+    "url": "https://github.com/chrismilson/sorted-array.js/issues"
   },
   "main": "dist/index.cjs.js",
   "module": "dist/index.esm.js",
@@ -39,10 +39,9 @@
     }
   },
   "keywords": [
-    "sorted",
-    "set",
-    "weight-balanced-tree",
-    "binary-tree",
+    "sorted array",
+    "weight balanced tree",
+    "binary tree",
     "iterable"
   ],
   "devDependencies": {
