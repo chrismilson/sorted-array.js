@@ -12,13 +12,20 @@ export function defaultCmp(a: unknown, b: unknown): number {
 }
 
 /**
- * A sorted set.
+ * A sorted array. Stays sorted through insertion and deletion.
  */
 export class SortedArray<T> {
   private root?: SATNode<T>
   private compare: (a: T, b: T) => number;
   [Symbol.toStringTag] = 'SortedArray'
 
+  /**
+   * Constructs a new Sorted Array.
+   *
+   * @param compare The comparison function for the sorting. Compares two
+   * elements a and b. If a is less than b, returns a negative number. If a is
+   * greater than b returns a positive number. If a is equal to b returns zero.
+   */
   constructor(compare: (a: T, b: T) => number = defaultCmp) {
     this.compare = compare
   }
@@ -85,6 +92,21 @@ export class SortedArray<T> {
 
   /**
    * Inserts a value into the sorted array in sorted order.
+   *
+   * Note that if the comparison function returns zero on a value already in the
+   * array, the inserted value will be "absorbed" into that value.
+   *
+   * For example:
+   *
+   * ```ts
+   * const arr = SortedArray((a, b) => 0)
+   *
+   * arr.insert(5) // [ 5 ]
+   * arr.insert(1000) // [ 5, 5 ]
+   * ```
+   *
+   * The comparator returned 0 when called on 5 and 1000, so the 1000 value was
+   * absorbed into the value 5.
    */
   insert(value: T): this {
     const node = find(this.root, (node) => {
