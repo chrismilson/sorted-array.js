@@ -22,5 +22,5 @@ export default {
       }
     })
   ],
-  external: ["wbtree"]
+  external: ["wbtree", "@shlappas/itertools"]
 }
