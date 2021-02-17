@@ -312,4 +312,24 @@ export class SortedArray<T> {
       }
     }
   }
+
+  /**
+   * Creates a sorted array from an iterable.
+   *
+   * @param iterable The itereable to turn into a sorted array.
+   * @param compare The compare method for the resulting SortedArray.
+   * @returns A new sorted array whose elements are from the passed iterable.
+   */
+  static from<T>(
+    iterable: Iterable<T>,
+    compare?: (a: T, b: T) => number
+  ): SortedArray<T> {
+    const result = new SortedArray<T>(compare)
+
+    for (const value of iterable) {
+      result.insert(value)
+    }
+
+    return result
+  }
 }
