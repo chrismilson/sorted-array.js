@@ -22,7 +22,8 @@
     "fix": "yarn lint --fix",
     "prebuild": "yarn lint",
     "build": "rollup -c",
-    "test": "jest"
+    "test": "jest",
+    "prepare": "yarn build"
   },
   "jest": {
     "roots": [
